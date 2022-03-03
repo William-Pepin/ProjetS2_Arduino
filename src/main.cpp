@@ -1,5 +1,5 @@
-/* 
- * Auteurs: Jean-Samuel Lauzon    
+/*
+ * Auteurs: Jean-Samuel Lauzon
  * Date: Fevrier 2022
 */
 
@@ -10,21 +10,56 @@
 /*------------------------------ Constantes ---------------------------------*/
 
 #define BAUD 9600        // Frequence de transmission serielle
+#define TRIG_LEFT = 39
+#define TRIG_RIGHT = 41
+#define BUTTON_JSTICK = 43
+#define DPAD_UP = 45
+#define DPAD_LEFT = 47
+#define DPAD_DOWN = 49
+#define DPAD_RIGHT = 51
+
+#define ACC_ST = 30
+#define BAR_10 = 32
+#define BAR_9 = 34
+#define BAR_8 = 36
+#define BAR_7 = 38
+#define BAR_6 = 40
+#define BAR_5 = 42
+#define BAR_4 = 44
+#define BAR_3 = 46
+#define BAR_2 = 48
+#define BAR_1 = 50
+
+#define VERT_JSTICK = A0
+#define HORI_JSTICK = A1
+#define ACC_X = A2
+#define ACC_Y = A3
+#define ACC_Z = A4
 
 /*---------------------------- Variables globales ---------------------------*/
 
-volatile bool shouldSend_ = false;  // Drapeau prêt à envoyer un message
-volatile bool shouldRead_ = false;  // Drapeau prêt à lire un message
+int bargraph = 0;
 
-int ledState = 0;
-int potValue = 0;
+bool dpad_up = false;
+bool dpad_down = false;
+bool dpad_left = false;
+bool dpad_right = false;
 
-int pinLED = 7;
-int pinPOT = A0;
+bool trig_left = false;
+bool trig_right = false;
+
+bool button_jstick = false;
+int vert_jstick = 0;
+int hori_jstick = 0;
+
+bool acc_ST = false;
+int acc_x = 0; //La valeur max ne sera pas 1024 étant donné que l'accéléromètre est alimenté par du 3.3V
+int acc_y = 0;
+int acc_z = 0;
 
 
 /*------------------------- Prototypes de fonctions -------------------------*/
-void sendMsg(); 
+void sendMsg();
 void readMsg();
 void serialEvent();
 /*---------------------------- Fonctions "Main" -----------------------------*/
@@ -38,14 +73,6 @@ void setup() {
 /* Boucle principale (infinie) */
 void loop() {
 
-  if(shouldRead_){
-    readMsg();
-    sendMsg();
-  }
-
-  potValue = analogRead(pinPOT);
-  //Serial.println(potValue);          // debug
-  delay(10);  // delais de 10 ms
 }
 
 /*---------------------------Definition de fonctions ------------------------*/
@@ -94,7 +121,7 @@ void readMsg(){
     Serial.println(error.c_str());
     return;
   }
-  
+
   // Analyse des éléments du message message
   parse_msg = doc["led"];
   if (!parse_msg.isNull()) {
