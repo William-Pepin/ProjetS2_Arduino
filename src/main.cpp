@@ -6,6 +6,7 @@
 /*------------------------------ Librairies ---------------------------------*/
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <math.h>
 
 /*------------------------------ Constantes ---------------------------------*/
 
@@ -49,8 +50,7 @@ bool trig_left = false;
 bool trig_right = false;
 
 bool button_jstick = false;
-int vert_jstick = 0;
-int hori_jstick = 0;
+double angle_jstick = 0;
 
 bool acc_ST = false;
 int acc_x = 0; //La valeur max ne sera pas 1024 étant donné que l'accéléromètre est alimenté par du 3.3V
@@ -60,9 +60,10 @@ int acc_z = 0;
 
 /*------------------------- Prototypes de fonctions -------------------------*/
 void sendMsg();
-void readMsg();
+bool readMsg();
 void serialEvent();
 void bargraph(int nbBar);
+void j_stick();
 /*---------------------------- Fonctions "Main" -----------------------------*/
 
 void setup() {
@@ -89,22 +90,25 @@ void setup() {
 
   pinMode(BUTTON_JSTICK, INPUT_PULLUP);
 
-  digitalWrite(BAR_1, false);
-  digitalWrite(BAR_2, false);
-  digitalWrite(BAR_3, false);
-  digitalWrite(BAR_4, false);
-  digitalWrite(BAR_5, false);
-  digitalWrite(BAR_6, false);
-  digitalWrite(BAR_7, false);
-  digitalWrite(BAR_8, false);
-  digitalWrite(BAR_9, false);
-  digitalWrite(BAR_10, false);
-  digitalWrite(ACC_ST, false);
+  digitalWrite(BAR_1, LOW);
+  digitalWrite(BAR_2, LOW);
+  digitalWrite(BAR_3, LOW);
+  digitalWrite(BAR_4, LOW);
+  digitalWrite(BAR_5, LOW);
+  digitalWrite(BAR_6, LOW);
+  digitalWrite(BAR_7, LOW);
+  digitalWrite(BAR_8, LOW);
+  digitalWrite(BAR_9, LOW);
+  digitalWrite(BAR_10, LOW);
+  digitalWrite(ACC_ST, LOW);
 }
 
 /* Boucle principale (infinie) */
 void loop() {
-
+  if(readMsg){
+    
+    sendMsg();
+  }
 }
 
 /*---------------------------Definition de fonctions ------------------------*/
@@ -143,7 +147,6 @@ void sendMsg() {
 
   // Envoie
   Serial.println();
-  shouldSend_ = false;
 }
 
 /*---------------------------Definition de fonctions ------------------------
@@ -152,20 +155,19 @@ Entrée : Aucun
 Sortie : Aucun
 Traitement : Réception du message
 -----------------------------------------------------------------------------*/
-void readMsg(){
+bool readMsg(){
   // Lecture du message Json
   StaticJsonDocument<500> doc;
   JsonVariant parse_msg;
 
   // Lecture sur le port Seriel
   DeserializationError error = deserializeJson(doc, Serial);
-  shouldRead_ = false;
 
   // Si erreur dans le message
   if (error) {
     Serial.print("deserialize() failed: ");
     Serial.println(error.c_str());
-    return;
+    return false;
   }
 
   // Analyse des éléments du message message
@@ -184,4 +186,46 @@ void readMsg(){
     digitalWrite(BAR_2, );
     digitalWrite(BAR_1, );
   }
+  return true;
+}
+
+void j_stick(){
+  int vert_jstick = analogRead(VERT_JSTICK);
+  bool vert_sign = true;
+  int hori_jstick = analogRead(HORI_JSTICK);
+  bool hori_sign = true;
+  double angle = 0;
+  
+  if(vert_jstick > 400 && vert_jstick < 624)
+    vert_jstick = 0;
+  else if(vert_jstick < 400){
+    vert_jstick = vert_jstick - 401;
+    vert_sign = false;
+  }
+  else()
+    vert_jstick = vert_jstick - 623;
+
+  if(hori_jstick > 400 && hori_jstick < 624)
+    hori_jstick = 0;
+  else if(hori_jstick < 400){
+    hori_jstick = hori_jstick - 401;
+    hori_sign = false;
+  }
+  else()
+    hori_jstick = hori_jstick - 623;
+  
+  if(vert_jstick == 0 && hori_jstick == 0)
+    return angle_jstick;
+  else(){
+    angle = abs(vert_jstick) / abs(hori_jstick);
+    angle = atan(angle);
+    if(vert_sign && !hori_sign)
+      angle = PI - angle;
+    else if(!vert_jstick && !hori_jstick)
+      angle = PI + angle;
+    else if(!vert_jstick && hori_jstick)
+      angle = 2 * PI - angle;
+    return angle;
+  }
+  
 }
