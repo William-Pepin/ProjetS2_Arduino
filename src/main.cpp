@@ -62,6 +62,7 @@ int acc_z = 0;
 void sendMsg();
 void readMsg();
 void serialEvent();
+void bargraph(int nbBar);
 /*---------------------------- Fonctions "Main" -----------------------------*/
 
 void setup() {
@@ -89,8 +90,22 @@ Traitement : Envoi du message
 void sendMsg() {
   StaticJsonDocument<500> doc;
   // Elements du message
-  doc["time"] = millis();
-  doc["analog"] = potValue;
+  doc["dpad_up"] = dpad_up;
+  doc["dpad_down"] = dpad_up;
+  doc["dpad_left"] = dpad_left;
+  doc["dpad_right"] = dpad_right;
+
+  doc["trig_left"] = trig_left;
+  doc["trig_right"] = trig_right;
+
+  doc["button_jstick"] = button_jstick;
+  doc["vert_jstick"] = vert_jstick;
+  doc["hori_jstick"] = hori_jstick;
+
+  doc["acc_ST"] = acc_ST;
+  doc["acc_x"] = acc_x;
+  doc["acc_y"] = acc_y;
+  doc["acc_z"] = acc_z;
 
   // Serialisation
   serializeJson(doc, Serial);
@@ -123,9 +138,19 @@ void readMsg(){
   }
 
   // Analyse des éléments du message message
-  parse_msg = doc["led"];
+  parse_msg = doc["bargraph"];
   if (!parse_msg.isNull()) {
     // mettre la led a la valeur doc["led"]
     digitalWrite(pinLED,doc["led"].as<bool>());
+    digitalWrite(BAR_10, );
+    digitalWrite(BAR_9, );
+    digitalWrite(BAR_8, );
+    digitalWrite(BAR_7, );
+    digitalWrite(BAR_6, );
+    digitalWrite(BAR_5, );
+    digitalWrite(BAR_4, );
+    digitalWrite(BAR_3, );
+    digitalWrite(BAR_2, );
+    digitalWrite(BAR_1, );
   }
 }
