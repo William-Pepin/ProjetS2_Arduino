@@ -61,8 +61,6 @@ int acc_z = 0;
 /*------------------------- Prototypes de fonctions -------------------------*/
 void sendMsg();
 bool readMsg();
-void serialEvent();
-void bargraph(int nbBar);
 void j_stick();
 void bargraphPinSetup(int nbBar);
 void buttons();
@@ -114,9 +112,6 @@ void loop() {
 }
 
 /*---------------------------Definition de fonctions ------------------------*/
-
-void serialEvent() { shouldRead_ = true; }
-
 
 /*---------------------------Definition de fonctions ------------------------
 Fonction d'envoi
