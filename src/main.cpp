@@ -66,8 +66,39 @@ void serialEvent();
 
 void setup() {
   Serial.begin(BAUD);               // Initialisation de la communication serielle
-  pinMode(pinLED, OUTPUT);
-  digitalWrite(pinLED, ledState);
+  pinMode(BAR_1, OUTPUT);
+  pinMode(BAR_2, OUTPUT);
+  pinMode(BAR_3, OUTPUT);
+  pinMode(BAR_4, OUTPUT);
+  pinMode(BAR_5, OUTPUT);
+  pinMode(BAR_6, OUTPUT);
+  pinMode(BAR_7, OUTPUT);
+  pinMode(BAR_8, OUTPUT);
+  pinMode(BAR_9, OUTPUT);
+  pinMode(BAR_10, OUTPUT);
+  pinMode(ACC_ST, OUTPUT);
+
+  pinMode(TRIG_LEFT, INPUT_PULLUP);
+  pinMode(TRIG_RIGHT, INPUT_PULLUP);
+
+  pinMode(DPAD_UP, INPUT_PULLUP);
+  pinMode(DPAD_DOWN, INPUT_PULLUP);
+  pinMode(DPAD_LEFT, INPUT_PULLUP);
+  pinMode(DPAD_RIGHT, INPUT_PULLUP);
+
+  pinMode(BUTTON_JSTICK, INPUT_PULLUP);
+
+  digitalWrite(BAR_1, false);
+  digitalWrite(BAR_2, false);
+  digitalWrite(BAR_3, false);
+  digitalWrite(BAR_4, false);
+  digitalWrite(BAR_5, false);
+  digitalWrite(BAR_6, false);
+  digitalWrite(BAR_7, false);
+  digitalWrite(BAR_8, false);
+  digitalWrite(BAR_9, false);
+  digitalWrite(BAR_10, false);
+  digitalWrite(ACC_ST, false);
 }
 
 /* Boucle principale (infinie) */
