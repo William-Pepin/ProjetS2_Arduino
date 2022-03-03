@@ -62,7 +62,7 @@ int acc_z = 0;
 void sendMsg();
 void readMsg();
 void serialEvent();
-void bargraph(int nbBar);
+void bargraphPinSetup(int nbBar);
 /*---------------------------- Fonctions "Main" -----------------------------*/
 
 void setup() {
@@ -173,15 +173,167 @@ void readMsg(){
   if (!parse_msg.isNull()) {
     // mettre la led a la valeur doc["led"]
     digitalWrite(pinLED,doc["led"].as<bool>());
-    digitalWrite(BAR_10, );
-    digitalWrite(BAR_9, );
-    digitalWrite(BAR_8, );
-    digitalWrite(BAR_7, );
-    digitalWrite(BAR_6, );
-    digitalWrite(BAR_5, );
-    digitalWrite(BAR_4, );
-    digitalWrite(BAR_3, );
-    digitalWrite(BAR_2, );
-    digitalWrite(BAR_1, );
+    digitalWrite(BAR_10, LOW);
+    digitalWrite(BAR_9, LOW);
+    digitalWrite(BAR_8, LOW);
+    digitalWrite(BAR_7, LOW);
+    digitalWrite(BAR_6, LOW);
+    digitalWrite(BAR_5, LOW);
+    digitalWrite(BAR_4, LOW);
+    digitalWrite(BAR_3, LOW);
+    digitalWrite(BAR_2, LOW);
+    digitalWrite(BAR_1, LOW);
+  }
+}
+
+
+void bargraphPinSetup(int nbBar){
+  switch (nbBar)
+  {
+  case 0 :
+    digitalWrite(BAR_10, LOW);
+    digitalWrite(BAR_9, LOW);
+    digitalWrite(BAR_8, LOW);
+    digitalWrite(BAR_7, LOW);
+    digitalWrite(BAR_6, LOW);
+    digitalWrite(BAR_5, LOW);
+    digitalWrite(BAR_4, LOW);
+    digitalWrite(BAR_3, LOW);
+    digitalWrite(BAR_2, LOW);
+    digitalWrite(BAR_1, LOW);
+    break;
+
+  case 1 :
+    digitalWrite(BAR_10, LOW);
+    digitalWrite(BAR_9, LOW);
+    digitalWrite(BAR_8, LOW);
+    digitalWrite(BAR_7, LOW);
+    digitalWrite(BAR_6, LOW);
+    digitalWrite(BAR_5, LOW);
+    digitalWrite(BAR_4, LOW);
+    digitalWrite(BAR_3, LOW);
+    digitalWrite(BAR_2, LOW);
+    digitalWrite(BAR_1, HIGH);
+    break;
+  
+  case 2 :
+    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_9, LOW);
+    digitalWrite(BAR_8, LOW);
+    digitalWrite(BAR_7, LOW);
+    digitalWrite(BAR_6, LOW);
+    digitalWrite(BAR_5, LOW);
+    digitalWrite(BAR_4, LOW);
+    digitalWrite(BAR_3, LOW);
+    digitalWrite(BAR_2, HIGH);
+    digitalWrite(BAR_1, HIGH);
+    break;
+  
+  case 3 :
+    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_9, LOW);
+    digitalWrite(BAR_8, LOW);
+    digitalWrite(BAR_7, LOW);
+    digitalWrite(BAR_6, LOW);
+    digitalWrite(BAR_5, LOW);
+    digitalWrite(BAR_4, LOW);
+    digitalWrite(BAR_3, HIGH);
+    digitalWrite(BAR_2, HIGH);
+    digitalWrite(BAR_1, HIGH);  
+    break;
+  
+  case 4 :
+    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_9, LOW);
+    digitalWrite(BAR_8, LOW);
+    digitalWrite(BAR_7, LOW);
+    digitalWrite(BAR_6, LOW);
+    digitalWrite(BAR_5, LOW);
+    digitalWrite(BAR_4, HIGH);
+    digitalWrite(BAR_3, HIGH);
+    digitalWrite(BAR_2, HIGH);
+    digitalWrite(BAR_1, HIGH);  
+    break;
+  
+  case 5 :
+    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_9, LOW);
+    digitalWrite(BAR_8, LOW);
+    digitalWrite(BAR_7, LOW);
+    digitalWrite(BAR_6, LOW);
+    digitalWrite(BAR_5, HIGH);
+    digitalWrite(BAR_4, HIGH);
+    digitalWrite(BAR_3, HIGH);
+    digitalWrite(BAR_2, HIGH);
+    digitalWrite(BAR_1, HIGH);  
+    break;
+  
+  case 6 :
+    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_9, LOW);
+    digitalWrite(BAR_8, LOW);
+    digitalWrite(BAR_7, LOW);
+    digitalWrite(BAR_6, HIGH);
+    digitalWrite(BAR_5, HIGH);
+    digitalWrite(BAR_4, HIGH);
+    digitalWrite(BAR_3, HIGH);
+    digitalWrite(BAR_2, HIGH);
+    digitalWrite(BAR_1, HIGH);  
+    break;
+  
+  case 7 :
+    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_9, LOW);
+    digitalWrite(BAR_8, LOW);
+    digitalWrite(BAR_7, HIGH);
+    digitalWrite(BAR_6, HIGH);
+    digitalWrite(BAR_5, HIGH);
+    digitalWrite(BAR_4, HIGH);
+    digitalWrite(BAR_3, HIGH);
+    digitalWrite(BAR_2, HIGH);
+    digitalWrite(BAR_1, HIGH);  
+    break;
+  
+  case 8 :
+    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_9, LOW);
+    digitalWrite(BAR_8, HIGH);
+    digitalWrite(BAR_7, HIGH);
+    digitalWrite(BAR_6, HIGH);
+    digitalWrite(BAR_5, HIGH);
+    digitalWrite(BAR_4, HIGH);
+    digitalWrite(BAR_3, HIGH);
+    digitalWrite(BAR_2, HIGH);
+    digitalWrite(BAR_1, HIGH);  
+    break;
+  
+  case 9 :
+    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_9, HIGH);
+    digitalWrite(BAR_8, HIGH);
+    digitalWrite(BAR_7, HIGH);
+    digitalWrite(BAR_6, HIGH);
+    digitalWrite(BAR_5, HIGH);
+    digitalWrite(BAR_4, HIGH);
+    digitalWrite(BAR_3, HIGH);
+    digitalWrite(BAR_2, HIGH);
+    digitalWrite(BAR_1, HIGH);  
+    break;
+  
+  case 10 :
+    digitalWrite(BAR_10, HIGH)
+    digitalWrite(BAR_9, HIGH);
+    digitalWrite(BAR_8, HIGH);
+    digitalWrite(BAR_7, HIGH);
+    digitalWrite(BAR_6, HIGH);
+    digitalWrite(BAR_5, HIGH);
+    digitalWrite(BAR_4, HIGH);
+    digitalWrite(BAR_3, HIGH);
+    digitalWrite(BAR_2, HIGH);
+    digitalWrite(BAR_1, HIGH);  
+    break;
+  
+  default:
+    break;
   }
 }
