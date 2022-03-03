@@ -63,6 +63,7 @@ void sendMsg();
 void readMsg();
 void serialEvent();
 void bargraphPinSetup(int nbBar);
+void buttons();
 /*---------------------------- Fonctions "Main" -----------------------------*/
 
 void setup() {
@@ -172,7 +173,6 @@ void readMsg(){
   parse_msg = doc["bargraph"];
   if (!parse_msg.isNull()) {
     // mettre la led a la valeur doc["led"]
-    digitalWrite(pinLED,doc["led"].as<bool>());
     digitalWrite(BAR_10, LOW);
     digitalWrite(BAR_9, LOW);
     digitalWrite(BAR_8, LOW);
@@ -336,4 +336,17 @@ void bargraphPinSetup(int nbBar){
   default:
     break;
   }
+}
+
+void buttons(){
+  dpad_up = digitalRead();
+  dpad_down = digitalRead();
+  dpad_left = digitalRead();
+  dpad_right = digitalRead();
+
+  trig_left = digitalRead();
+  trig_right = digitalRead();
+
+  button_jstick = digitalRead();
+
 }
