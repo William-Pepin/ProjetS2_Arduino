@@ -11,31 +11,31 @@
 /*------------------------------ Constantes ---------------------------------*/
 
 #define BAUD 9600        // Frequence de transmission serielle
-#define TRIG_LEFT = 39
-#define TRIG_RIGHT = 41
-#define BUTTON_JSTICK = 43
-#define DPAD_UP = 45
-#define DPAD_LEFT = 47
-#define DPAD_DOWN = 49
-#define DPAD_RIGHT = 51
+#define TRIG_LEFT 39
+#define TRIG_RIGHT 41
+#define BUTTON_JSTICK 43
+#define DPAD_UP 45
+#define DPAD_LEFT 47
+#define DPAD_DOWN 49
+#define DPAD_RIGHT 51
 
-#define ACC_ST = 30
-#define BAR_10 = 32
-#define BAR_9 = 34
-#define BAR_8 = 36
-#define BAR_7 = 38
-#define BAR_6 = 40
-#define BAR_5 = 42
-#define BAR_4 = 44
-#define BAR_3 = 46
-#define BAR_2 = 48
-#define BAR_1 = 50
+#define ACC_ST 30
+#define BAR_10 32
+#define BAR_9 34
+#define BAR_8 36
+#define BAR_7 38
+#define BAR_6 40
+#define BAR_5 42
+#define BAR_4 44
+#define BAR_3 46
+#define BAR_2 48
+#define BAR_1 50
 
-#define VERT_JSTICK = A0
-#define HORI_JSTICK = A1
-#define ACC_X = A2
-#define ACC_Y = A3
-#define ACC_Z = A4
+#define VERT_JSTICK A0
+#define HORI_JSTICK A1
+#define ACC_X A2
+#define ACC_Y A3
+#define ACC_Z A4
 
 /*---------------------------- Variables globales ---------------------------*/
 
@@ -61,7 +61,7 @@ int acc_z = 0;
 /*------------------------- Prototypes de fonctions -------------------------*/
 void sendMsg();
 bool readMsg();
-void j_stick();
+double j_stick();
 void bargraphPinSetup(int nbBar);
 void buttons();
 /*---------------------------- Fonctions "Main" -----------------------------*/
@@ -106,7 +106,8 @@ void setup() {
 /* Boucle principale (infinie) */
 void loop() {
   if(readMsg){
-    
+    angle_jstick = j_stick();
+    buttons();
     sendMsg();
   }
 }
@@ -131,8 +132,7 @@ void sendMsg() {
   doc["trig_right"] = trig_right;
 
   doc["button_jstick"] = button_jstick;
-  doc["vert_jstick"] = vert_jstick;
-  doc["hori_jstick"] = hori_jstick;
+  doc["angle_jstick"] = angle_jstick;
 
   doc["acc_ST"] = acc_ST;
   doc["acc_x"] = acc_x;
@@ -181,11 +181,13 @@ bool readMsg(){
     digitalWrite(BAR_3, LOW);
     digitalWrite(BAR_2, LOW);
     digitalWrite(BAR_1, LOW);
+    return false;
   }
+  bargraphPinSetup(parse_msg);
   return true;
 }
 
-void j_stick(){
+double j_stick(){
   int vert_jstick = analogRead(VERT_JSTICK);
   bool vert_sign = true;
   int hori_jstick = analogRead(HORI_JSTICK);
@@ -198,7 +200,7 @@ void j_stick(){
     vert_jstick = vert_jstick - 401;
     vert_sign = false;
   }
-  else()
+  else
     vert_jstick = vert_jstick - 623;
 
   if(hori_jstick > 400 && hori_jstick < 624)
@@ -207,12 +209,12 @@ void j_stick(){
     hori_jstick = hori_jstick - 401;
     hori_sign = false;
   }
-  else()
+  else
     hori_jstick = hori_jstick - 623;
   
   if(vert_jstick == 0 && hori_jstick == 0)
     return angle_jstick;
-  else(){
+  else{
     angle = abs(vert_jstick) / abs(hori_jstick);
     angle = atan(angle);
     if(vert_sign && !hori_sign)
@@ -256,7 +258,7 @@ void bargraphPinSetup(int nbBar){
     break;
   
   case 2 :
-    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_10, LOW);
     digitalWrite(BAR_9, LOW);
     digitalWrite(BAR_8, LOW);
     digitalWrite(BAR_7, LOW);
@@ -269,7 +271,7 @@ void bargraphPinSetup(int nbBar){
     break;
   
   case 3 :
-    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_10, LOW);
     digitalWrite(BAR_9, LOW);
     digitalWrite(BAR_8, LOW);
     digitalWrite(BAR_7, LOW);
@@ -282,7 +284,7 @@ void bargraphPinSetup(int nbBar){
     break;
   
   case 4 :
-    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_10, LOW);
     digitalWrite(BAR_9, LOW);
     digitalWrite(BAR_8, LOW);
     digitalWrite(BAR_7, LOW);
@@ -295,7 +297,7 @@ void bargraphPinSetup(int nbBar){
     break;
   
   case 5 :
-    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_10, LOW);
     digitalWrite(BAR_9, LOW);
     digitalWrite(BAR_8, LOW);
     digitalWrite(BAR_7, LOW);
@@ -308,7 +310,7 @@ void bargraphPinSetup(int nbBar){
     break;
   
   case 6 :
-    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_10, LOW);
     digitalWrite(BAR_9, LOW);
     digitalWrite(BAR_8, LOW);
     digitalWrite(BAR_7, LOW);
@@ -321,7 +323,7 @@ void bargraphPinSetup(int nbBar){
     break;
   
   case 7 :
-    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_10, LOW);
     digitalWrite(BAR_9, LOW);
     digitalWrite(BAR_8, LOW);
     digitalWrite(BAR_7, HIGH);
@@ -334,7 +336,7 @@ void bargraphPinSetup(int nbBar){
     break;
   
   case 8 :
-    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_10, LOW);
     digitalWrite(BAR_9, LOW);
     digitalWrite(BAR_8, HIGH);
     digitalWrite(BAR_7, HIGH);
@@ -347,7 +349,7 @@ void bargraphPinSetup(int nbBar){
     break;
   
   case 9 :
-    digitalWrite(BAR_10, LOW)
+    digitalWrite(BAR_10, LOW);
     digitalWrite(BAR_9, HIGH);
     digitalWrite(BAR_8, HIGH);
     digitalWrite(BAR_7, HIGH);
@@ -360,7 +362,7 @@ void bargraphPinSetup(int nbBar){
     break;
   
   case 10 :
-    digitalWrite(BAR_10, HIGH)
+    digitalWrite(BAR_10, HIGH);
     digitalWrite(BAR_9, HIGH);
     digitalWrite(BAR_8, HIGH);
     digitalWrite(BAR_7, HIGH);
@@ -378,14 +380,14 @@ void bargraphPinSetup(int nbBar){
 }
 
 void buttons(){
-  dpad_up = digitalRead();
-  dpad_down = digitalRead();
-  dpad_left = digitalRead();
-  dpad_right = digitalRead();
+  dpad_up = digitalRead(DPAD_UP);
+  dpad_down = digitalRead(DPAD_DOWN);
+  dpad_left = digitalRead(DPAD_LEFT);
+  dpad_right = digitalRead(DPAD_RIGHT);
 
-  trig_left = digitalRead();
-  trig_right = digitalRead();
+  trig_left = digitalRead(TRIG_LEFT);
+  trig_right = digitalRead(TRIG_RIGHT);
 
-  button_jstick = digitalRead();
+  button_jstick = digitalRead(BUTTON_JSTICK);
 
 }
