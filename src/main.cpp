@@ -105,11 +105,12 @@ void setup() {
 
 /* Boucle principale (infinie) */
 void loop() {
-  if(readMsg){
+  if(readMsg()){
     angle_jstick = j_stick();
     buttons();
     sendMsg();
   }
+  delay(10);
 }
 
 /*---------------------------Definition de fonctions ------------------------*/
