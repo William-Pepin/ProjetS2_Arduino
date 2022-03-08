@@ -5,7 +5,7 @@
 #define BAUD 9600        // Frequence de transmission serielle
 
 int incomingByte = 0; // for incoming serial data
-char msg[100];
+char msg[1000];
 int i = 0;
 
 /*---------------------------- Fonctions "Main" -----------------------------*/
