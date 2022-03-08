@@ -5,7 +5,7 @@
 
 /*------------------------------ Librairies ---------------------------------*/
 #include <Arduino.h>
-#include <ArduinoJson.h>
+#include "ArduinoJson.h"
 #include <math.h>
 
 /*------------------------------ Constantes ---------------------------------*/
@@ -37,9 +37,11 @@
 #define ACC_Y A3
 #define ACC_Z A4
 
+#define JOYDRIFT 25
 /*---------------------------- Variables globales ---------------------------*/
 
 int bargraph = 0;
+
 
 bool dpad_up = false;
 bool dpad_down = false;
@@ -57,11 +59,14 @@ int acc_x = 0; //La valeur max ne sera pas 1024 étant donné que l'accélérom�
 int acc_y = 0;
 int acc_z = 0;
 
+double angle = 0;
+
 
 /*------------------------- Prototypes de fonctions -------------------------*/
 void sendMsg();
 bool readMsg();
 double j_stick();
+double j_stick_MAX();
 void bargraphPinSetup(int nbBar);
 void buttons();
 /*---------------------------- Fonctions "Main" -----------------------------*/
@@ -105,11 +110,65 @@ void setup() {
 
 /* Boucle principale (infinie) */
 void loop() {
-  if(readMsg){
+  //Serial.println(digitalRead(DPAD_RIGHT));
+
+  /* if (digitalRead(DPAD_RIGHT) == LOW)
+  {
+    Serial.println("LOW");
+  }
+  
+  if (digitalRead(DPAD_RIGHT) == HIGH)
+  {
+    Serial.println("HIGH");
+  } */
+
+
+  //if (digitalRead(TRIG_RIGHT) == LOW)
+  //{
+  //  Serial.println("Trig Right pressed");
+  //}
+//
+  //if (digitalRead(DPAD_UP) == LOW)
+  //{
+  //  Serial.println("DPAD_UP pressed");
+  //}
+//
+  //if (digitalRead(DPAD_DOWN) == LOW)
+  //{
+  //  Serial.println("DPAD_DOWN pressed");
+  //}
+//
+  //if (digitalRead(DPAD_LEFT) == LOW)
+  //{
+  //  Serial.println("DPAD_LEFT pressed");
+  //}
+//
+  //if (digitalRead(DPAD_RIGHT) == LOW)
+  //{
+  //  Serial.println("DPAD_RIGHT pressed");
+  //}
+//
+  //if (digitalRead(BUTTON_JSTICK) == LOW)
+  //{
+  //  Serial.println("Trig Left pressed");
+  //}
+
+  Serial.print("angle JSTICK ");
+  Serial.println(j_stick_MAX());
+  
+  bargraphPinSetup(10);
+  
+  delay(500);
+  //Serial.println("ACC X = " + analogRead(ACC_X));
+  //Serial.println("ACC Y = " + analogRead(ACC_Y));
+  //Serial.println("ACC Z = " + analogRead(ACC_Z));
+  
+  /*if(readMsg){
     angle_jstick = j_stick();
     buttons();
     sendMsg();
-  }
+  }*/
+  delay(10);
 }
 
 /*---------------------------Definition de fonctions ------------------------*/
@@ -187,12 +246,44 @@ bool readMsg(){
   return true;
 }
 
+double j_stick_MAX(){
+  int vert_jstick = analogRead(VERT_JSTICK);
+  bool vert_sign = true;
+  int hori_jstick = analogRead(HORI_JSTICK);
+  bool hori_sign = true;
+  
+  
+  Serial.print("VER = ");
+  Serial.println(analogRead(VERT_JSTICK));
+  Serial.print("HOR = ");
+  Serial.println(analogRead(HORI_JSTICK)); 
+
+  if ((vert_jstick >= (496-JOYDRIFT) && hori_jstick >= (509-JOYDRIFT)) && ((vert_jstick <= (496+JOYDRIFT) && hori_jstick <= (509+JOYDRIFT))))
+  {
+    angle = 420.69;
+  }else
+  {
+    vert_jstick -= 512;
+    hori_jstick -= 512;
+    angle = atan2(vert_jstick, hori_jstick);
+  }
+  
+  Serial.print("Angle = ");
+  Serial.print(angle);
+}
+
+
 double j_stick(){
   int vert_jstick = analogRead(VERT_JSTICK);
   bool vert_sign = true;
   int hori_jstick = analogRead(HORI_JSTICK);
   bool hori_sign = true;
   double angle = 0;
+  
+  Serial.print("VER = ");
+  Serial.println(analogRead(VERT_JSTICK));
+  Serial.print("HOR = ");
+  Serial.println(analogRead(HORI_JSTICK)); 
   
   if(vert_jstick > 400 && vert_jstick < 624)
     vert_jstick = 0;
