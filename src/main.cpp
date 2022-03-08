@@ -10,7 +10,7 @@
 
 /*------------------------------ Constantes ---------------------------------*/
 
-#define BAUD 9600        // Frequence de transmission serielle
+#define BAUD 115200        // Frequence de transmission serielle
 #define TRIG_LEFT 39
 #define TRIG_RIGHT 41
 #define BUTTON_JSTICK 43
@@ -61,6 +61,8 @@ int acc_z = 0;
 
 double angle = 0;
 
+int cmpt = 0;
+
 
 /*------------------------- Prototypes de fonctions -------------------------*/
 void sendMsg();
@@ -69,6 +71,7 @@ double j_stick();
 double j_stick_MAX();
 void bargraphPinSetup(int nbBar);
 void buttons();
+void showButtonpressed();
 /*---------------------------- Fonctions "Main" -----------------------------*/
 
 void setup() {
@@ -110,55 +113,14 @@ void setup() {
 
 /* Boucle principale (infinie) */
 void loop() {
-  //Serial.println(digitalRead(DPAD_RIGHT));
-
-  /* if (digitalRead(DPAD_RIGHT) == LOW)
-  {
-    Serial.println("LOW");
-  }
+  showButtonpressed();
   
-  if (digitalRead(DPAD_RIGHT) == HIGH)
-  {
-    Serial.println("HIGH");
-  } */
 
 
-  //if (digitalRead(TRIG_RIGHT) == LOW)
-  //{
-  //  Serial.println("Trig Right pressed");
-  //}
-//
-  //if (digitalRead(DPAD_UP) == LOW)
-  //{
-  //  Serial.println("DPAD_UP pressed");
-  //}
-//
-  //if (digitalRead(DPAD_DOWN) == LOW)
-  //{
-  //  Serial.println("DPAD_DOWN pressed");
-  //}
-//
-  //if (digitalRead(DPAD_LEFT) == LOW)
-  //{
-  //  Serial.println("DPAD_LEFT pressed");
-  //}
-//
-  //if (digitalRead(DPAD_RIGHT) == LOW)
-  //{
-  //  Serial.println("DPAD_RIGHT pressed");
-  //}
-//
-  //if (digitalRead(BUTTON_JSTICK) == LOW)
-  //{
-  //  Serial.println("Trig Left pressed");
-  //}
-
-  Serial.print("angle JSTICK ");
-  Serial.println(j_stick_MAX());
   
-  bargraphPinSetup(10);
   
-  delay(500);
+  
+  //delay(500);
   //Serial.println("ACC X = " + analogRead(ACC_X));
   //Serial.println("ACC Y = " + analogRead(ACC_Y));
   //Serial.println("ACC Z = " + analogRead(ACC_Z));
@@ -168,7 +130,15 @@ void loop() {
     buttons();
     sendMsg();
   }*/
-  delay(10);
+  
+  if (cmpt > 10)
+  {
+    cmpt = 0;
+  }
+  
+  cmpt++;
+  bargraphPinSetup(cmpt);
+  delay(150);
 }
 
 /*---------------------------Definition de fonctions ------------------------*/
@@ -481,4 +451,82 @@ void buttons(){
 
   button_jstick = digitalRead(BUTTON_JSTICK);
 
+}
+
+void showButtonpressed(){
+  Serial.write(27);       // ESC command
+  Serial.print("[2J");    // clear screen command
+  Serial.write(27);
+  Serial.print("[H");     // cursor to home command
+  Serial.println("===========BUTTTON=============");
+
+
+  if (digitalRead(DPAD_RIGHT) == LOW)
+  {
+    Serial.println("DPAD_RIGHT\t\t = LOW");
+  
+  }else
+  {
+    Serial.println("DPAD_RIGHT\t\t = HIGH");
+  }
+  
+  if (digitalRead(DPAD_LEFT) == LOW)
+  {
+    Serial.println("DPAD_LEFT\t\t = LOW");
+  }else
+  {
+    Serial.println("DPAD_LEFT\t\t = HIGH");
+  }
+
+  if (digitalRead(DPAD_UP) == LOW)
+  {
+    Serial.println("DPAD_UP\t\t\t = LOW");
+  }else
+  {
+    Serial.println("DPAD_UP\t\t\t = HIGH");
+  }
+
+  if (digitalRead(DPAD_DOWN) == LOW)
+  {
+    Serial.println("DPAD_DOWN\t\t = LOW");
+  }else
+  {
+    Serial.println("DPAD_DOWN\t\t = HIGH");
+  }
+  
+  if (digitalRead(TRIG_LEFT) == LOW)
+  {
+    Serial.println("TRIG_LEFT\t\t = LOW");
+  }else
+  {
+    Serial.println("TRIG_LEFT\t\t = HIGH");
+  }
+
+  if (digitalRead(TRIG_RIGHT) == LOW)
+  {
+    Serial.println("TRIG_RIGHT\t\t = LOW");
+  }else
+  {
+    Serial.println("TRIG_RIGHT\t\t = HIGH");
+  }
+
+  if (digitalRead(BUTTON_JSTICK) == LOW)
+  {
+    Serial.println("BUTTON_JSTICK\t\t = LOW");
+  }else
+  {
+    Serial.println("BUTTON_JSTICK\t\t = HIGH");
+  }
+
+  Serial.println("\n===========JOYSTICK=============");
+  j_stick_MAX();
+  Serial.println();
+  
+  Serial.println("\n========ACCELEROMETRE===========");
+  Serial.print("X = ");
+  Serial.println(analogRead(ACC_X));
+  Serial.print("Y = ");
+  Serial.println(analogRead(ACC_Y));
+  Serial.print("Z = ");
+  Serial.println(analogRead(ACC_Z));
 }
