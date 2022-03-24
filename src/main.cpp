@@ -61,9 +61,6 @@ int acc_z = 0;
 
 double angle = 0;
 
-int cmpt = 0;
-
-
 /*------------------------- Prototypes de fonctions -------------------------*/
 void sendMsg();
 bool readMsg();
@@ -113,32 +110,12 @@ void setup() {
 
 /* Boucle principale (infinie) */
 void loop() {
-  showButtonpressed();
   
-
-
-  
-  
-  
-  //delay(500);
-  //Serial.println("ACC X = " + analogRead(ACC_X));
-  //Serial.println("ACC Y = " + analogRead(ACC_Y));
-  //Serial.println("ACC Z = " + analogRead(ACC_Z));
-  
-  /*if(readMsg){
+  if(readMsg){
     angle_jstick = j_stick();
     buttons();
     sendMsg();
-  }*/
-  
-  if (cmpt > 10)
-  {
-    cmpt = 0;
   }
-  
-  cmpt++;
-  bargraphPinSetup(cmpt);
-  delay(150);
 }
 
 /*---------------------------Definition de fonctions ------------------------*/
@@ -152,21 +129,21 @@ Traitement : Envoi du message
 void sendMsg() {
   StaticJsonDocument<500> doc;
   // Elements du message
-  doc["dpad_up"] = dpad_up;
-  doc["dpad_down"] = dpad_up;
-  doc["dpad_left"] = dpad_left;
-  doc["dpad_right"] = dpad_right;
+  doc["d_u"] = dpad_up;
+  doc["d_d"] = dpad_down;
+  doc["d_l"] = dpad_left;
+  doc["d_r"] = dpad_right;
 
-  doc["trig_left"] = trig_left;
-  doc["trig_right"] = trig_right;
+  doc["t_l"] = trig_left;
+  doc["t_r"] = trig_right;
 
-  doc["button_jstick"] = button_jstick;
-  doc["angle_jstick"] = angle_jstick;
+  doc["b_j"] = button_jstick;
+  doc["a_j"] = angle_jstick;
 
-  doc["acc_ST"] = acc_ST;
-  doc["acc_x"] = acc_x;
-  doc["acc_y"] = acc_y;
-  doc["acc_z"] = acc_z;
+  doc["a_S"] = acc_ST;
+  doc["a_x"] = acc_x;
+  doc["a_y"] = acc_y;
+  doc["a_z"] = acc_z;
 
   // Serialisation
   serializeJson(doc, Serial);
@@ -191,46 +168,27 @@ bool readMsg(){
 
   // Si erreur dans le message
   if (error) {
-    Serial.print("deserialize() failed: ");
-    Serial.println(error.c_str());
     return false;
   }
 
   // Analyse des éléments du message message
-  parse_msg = doc["bargraph"];
+  parse_msg = doc["bg"];
   if (!parse_msg.isNull()) {
-    // mettre la led a la valeur doc["led"]
-    digitalWrite(BAR_10, LOW);
-    digitalWrite(BAR_9, LOW);
-    digitalWrite(BAR_8, LOW);
-    digitalWrite(BAR_7, LOW);
-    digitalWrite(BAR_6, LOW);
-    digitalWrite(BAR_5, LOW);
-    digitalWrite(BAR_4, LOW);
-    digitalWrite(BAR_3, LOW);
-    digitalWrite(BAR_2, LOW);
-    digitalWrite(BAR_1, LOW);
     return false;
   }
   bargraphPinSetup(parse_msg);
   return true;
 }
 
-double j_stick_MAX(){
+double j_stick(){
   int vert_jstick = analogRead(VERT_JSTICK);
   bool vert_sign = true;
   int hori_jstick = analogRead(HORI_JSTICK);
   bool hori_sign = true;
-  
-  
-  Serial.print("VER = ");
-  Serial.println(analogRead(VERT_JSTICK));
-  Serial.print("HOR = ");
-  Serial.println(analogRead(HORI_JSTICK)); 
 
   if ((vert_jstick >= (496-JOYDRIFT) && hori_jstick >= (509-JOYDRIFT)) && ((vert_jstick <= (496+JOYDRIFT) && hori_jstick <= (509+JOYDRIFT))))
   {
-    angle = 420.69;
+    angle = angle;
   }else
   {
     vert_jstick -= 512;
@@ -238,55 +196,7 @@ double j_stick_MAX(){
     angle = atan2(vert_jstick, hori_jstick);
   }
   
-  Serial.print("Angle = ");
-  Serial.print(angle);
-}
-
-
-double j_stick(){
-  int vert_jstick = analogRead(VERT_JSTICK);
-  bool vert_sign = true;
-  int hori_jstick = analogRead(HORI_JSTICK);
-  bool hori_sign = true;
-  double angle = 0;
-  
-  Serial.print("VER = ");
-  Serial.println(analogRead(VERT_JSTICK));
-  Serial.print("HOR = ");
-  Serial.println(analogRead(HORI_JSTICK)); 
-  
-  if(vert_jstick > 400 && vert_jstick < 624)
-    vert_jstick = 0;
-  else if(vert_jstick < 400){
-    vert_jstick = vert_jstick - 401;
-    vert_sign = false;
-  }
-  else
-    vert_jstick = vert_jstick - 623;
-
-  if(hori_jstick > 400 && hori_jstick < 624)
-    hori_jstick = 0;
-  else if(hori_jstick < 400){
-    hori_jstick = hori_jstick - 401;
-    hori_sign = false;
-  }
-  else
-    hori_jstick = hori_jstick - 623;
-  
-  if(vert_jstick == 0 && hori_jstick == 0)
-    return angle_jstick;
-  else{
-    angle = abs(vert_jstick) / abs(hori_jstick);
-    angle = atan(angle);
-    if(vert_sign && !hori_sign)
-      angle = PI - angle;
-    else if(!vert_jstick && !hori_jstick)
-      angle = PI + angle;
-    else if(!vert_jstick && hori_jstick)
-      angle = 2 * PI - angle;
-    return angle;
-  }
-  
+  return angle;
 }
 
 void bargraphPinSetup(int nbBar){
@@ -451,82 +361,4 @@ void buttons(){
 
   button_jstick = digitalRead(BUTTON_JSTICK);
 
-}
-
-void showButtonpressed(){
-  Serial.write(27);       // ESC command
-  Serial.print("[2J");    // clear screen command
-  Serial.write(27);
-  Serial.print("[H");     // cursor to home command
-  Serial.println("===========BUTTTON=============");
-
-
-  if (digitalRead(DPAD_RIGHT) == LOW)
-  {
-    Serial.println("DPAD_RIGHT\t\t = LOW");
-  
-  }else
-  {
-    Serial.println("DPAD_RIGHT\t\t = HIGH");
-  }
-  
-  if (digitalRead(DPAD_LEFT) == LOW)
-  {
-    Serial.println("DPAD_LEFT\t\t = LOW");
-  }else
-  {
-    Serial.println("DPAD_LEFT\t\t = HIGH");
-  }
-
-  if (digitalRead(DPAD_UP) == LOW)
-  {
-    Serial.println("DPAD_UP\t\t\t = LOW");
-  }else
-  {
-    Serial.println("DPAD_UP\t\t\t = HIGH");
-  }
-
-  if (digitalRead(DPAD_DOWN) == LOW)
-  {
-    Serial.println("DPAD_DOWN\t\t = LOW");
-  }else
-  {
-    Serial.println("DPAD_DOWN\t\t = HIGH");
-  }
-  
-  if (digitalRead(TRIG_LEFT) == LOW)
-  {
-    Serial.println("TRIG_LEFT\t\t = LOW");
-  }else
-  {
-    Serial.println("TRIG_LEFT\t\t = HIGH");
-  }
-
-  if (digitalRead(TRIG_RIGHT) == LOW)
-  {
-    Serial.println("TRIG_RIGHT\t\t = LOW");
-  }else
-  {
-    Serial.println("TRIG_RIGHT\t\t = HIGH");
-  }
-
-  if (digitalRead(BUTTON_JSTICK) == LOW)
-  {
-    Serial.println("BUTTON_JSTICK\t\t = LOW");
-  }else
-  {
-    Serial.println("BUTTON_JSTICK\t\t = HIGH");
-  }
-
-  Serial.println("\n===========JOYSTICK=============");
-  j_stick_MAX();
-  Serial.println();
-  
-  Serial.println("\n========ACCELEROMETRE===========");
-  Serial.print("X = ");
-  Serial.println(analogRead(ACC_X));
-  Serial.print("Y = ");
-  Serial.println(analogRead(ACC_Y));
-  Serial.print("Z = ");
-  Serial.println(analogRead(ACC_Z));
 }
