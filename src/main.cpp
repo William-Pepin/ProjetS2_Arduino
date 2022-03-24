@@ -26,9 +26,10 @@ void loop() {
         msg[i] = incomingByte;
         i++;
     }
-    if(incomingByte == 20){
+    if(incomingByte == 10){
         delay(10);
         Serial.println(msg);
+        i = 0;
     }
   }
 }
