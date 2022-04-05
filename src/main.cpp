@@ -10,11 +10,7 @@
 
 /*------------------------------ Constantes ---------------------------------*/
 
-<<<<<<< HEAD
 #define BAUD 9600        // Frequence de transmission serielle
-=======
-#define BAUD 9600 // Frequence de transmission serielle
->>>>>>> 4133bdf2628211a827d0e535db6cd62fa82a5305
 #define TRIG_LEFT 39
 #define TRIG_RIGHT 41
 #define BUTTON_JSTICK 43
@@ -119,18 +115,10 @@ void setup()
 }
 
 /* Boucle principale (infinie) */
-<<<<<<< HEAD
 void loop() {
   
   if(shouldRead_){
     readMsg();
-=======
-void loop()
-{
-
-  if (shouldRead_)
-  {
->>>>>>> 4133bdf2628211a827d0e535db6cd62fa82a5305
     angle_jstick = j_stick();
     buttons();
     readMsg();
@@ -140,13 +128,7 @@ void loop()
 }
 
 /*---------------------------Definition de fonctions ------------------------*/
-<<<<<<< HEAD
 void serialEvent() { shouldRead_ = true; }
-=======
-
-void serialEvent() { shouldRead_ = true; }
-
->>>>>>> 4133bdf2628211a827d0e535db6cd62fa82a5305
 /*---------------------------Definition de fonctions ------------------------
 Fonction d'envoi
 Entrée : Aucun
@@ -197,10 +179,6 @@ bool readMsg()
   // Lecture sur le port Seriel
   DeserializationError error = deserializeJson(doc, Serial);
   shouldRead_ = false;
-<<<<<<< HEAD
-=======
-
->>>>>>> 4133bdf2628211a827d0e535db6cd62fa82a5305
   // Si erreur dans le message
   if (error)
   {
@@ -212,15 +190,9 @@ bool readMsg()
   // Analyse des éléments du message message
   
   parse_msg = doc["bg"];
-<<<<<<< HEAD
   //acc_ST = doc["a_S"];
   if (!parse_msg.isNull()) {
     return false;
-=======
-  if (!parse_msg.isNull())
-  {
-    bargraphPinSetup(parse_msg);
->>>>>>> 4133bdf2628211a827d0e535db6cd62fa82a5305
   }
 }
 
