@@ -10,9 +10,9 @@
 
 /*------------------------------ Constantes ---------------------------------*/
 
-#define BAUD 9600        // Frequence de transmission serielle
-#define TRIG_LEFT 39
-#define TRIG_RIGHT 41
+#define BAUD 74880        // Frequence de transmission serielle
+#define TRIG_LEFT 41
+#define TRIG_RIGHT 39
 #define BUTTON_JSTICK 43
 #define DPAD_UP 45
 #define DPAD_LEFT 47
@@ -40,9 +40,6 @@
 #define JOYDRIFT 25
 /*---------------------------- Variables globales ---------------------------*/
 
-volatile bool shouldSend_ = false; // Drapeau prêt à envoyer un message
-volatile bool shouldRead_ = false; // Drapeau prêt à lire un message
-
 int bargraph = 0;
 
 bool dpad_up = false;
@@ -54,6 +51,9 @@ bool trig_left = false;
 bool trig_right = false;
 
 bool button_jstick = false;
+
+int d_u,d_d,d_l,d_r,t_l,t_r,b_j;
+
 double angle_jstick = 0;
 
 bool acc_ST = false;
@@ -121,10 +121,8 @@ void loop() {
     readMsg();
     angle_jstick = j_stick();
     buttons();
-    readMsg();
     sendMsg();
   }
-  delay(10); // delais de 10 ms
 }
 
 /*---------------------------Definition de fonctions ------------------------*/
@@ -139,7 +137,13 @@ void sendMsg()
 {
   StaticJsonDocument<500> doc;
   // Elements du message
-  int d_u, d_d, d_l, d_r, t_l, t_r, b_j = dpad_up,dpad_down,dpad_left,dpad_right,trig_left,trig_right,button_jstick;
+  d_u = !dpad_up;
+  d_d = !dpad_down;
+  d_l = !dpad_left;
+  d_r = !dpad_right;
+  t_l = !trig_left;
+  t_r = !trig_right;
+  b_j = !button_jstick;
   
   doc["d_u"] = d_u;
   doc["d_d"] = d_d;
@@ -161,7 +165,6 @@ void sendMsg()
 
   // Envoie
   Serial.println();
-  shouldSend_ = false;
 }
 
 /*---------------------------Definition de fonctions ------------------------
