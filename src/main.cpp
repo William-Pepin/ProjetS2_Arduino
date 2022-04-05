@@ -10,7 +10,7 @@
 
 /*------------------------------ Constantes ---------------------------------*/
 
-#define BAUD 115200        // Frequence de transmission serielle
+#define BAUD 9600        // Frequence de transmission serielle
 #define TRIG_LEFT 39
 #define TRIG_RIGHT 41
 #define BUTTON_JSTICK 43
@@ -61,6 +61,8 @@ int acc_z = 0;
 
 double angle = 0;
 
+volatile bool shouldRead_ = false; // Drapeau prêt à lire un message
+
 /*------------------------- Prototypes de fonctions -------------------------*/
 void sendMsg();
 bool readMsg();
@@ -69,6 +71,7 @@ double j_stick_MAX();
 void bargraphPinSetup(int nbBar);
 void buttons();
 void showButtonpressed();
+void serialEvent();
 /*---------------------------- Fonctions "Main" -----------------------------*/
 
 void setup() {
@@ -111,7 +114,8 @@ void setup() {
 /* Boucle principale (infinie) */
 void loop() {
   
-  if(readMsg){
+  if(shouldRead_){
+    readMsg();
     angle_jstick = j_stick();
     buttons();
     sendMsg();
@@ -119,7 +123,7 @@ void loop() {
 }
 
 /*---------------------------Definition de fonctions ------------------------*/
-
+void serialEvent() { shouldRead_ = true; }
 /*---------------------------Definition de fonctions ------------------------
 Fonction d'envoi
 Entrée : Aucun
@@ -129,18 +133,19 @@ Traitement : Envoi du message
 void sendMsg() {
   StaticJsonDocument<500> doc;
   // Elements du message
-  doc["d_u"] = dpad_up;
-  doc["d_d"] = dpad_down;
-  doc["d_l"] = dpad_left;
-  doc["d_r"] = dpad_right;
+  int d_u, d_d, d_l, d_r, t_l, t_r, b_j = dpad_up,dpad_down,dpad_left,dpad_right,trig_left,trig_right,button_jstick;
+  
+  doc["d_u"] = d_u;
+  doc["d_d"] = d_d;
+  doc["d_l"] = d_l;
+  doc["d_r"] = d_r;
 
-  doc["t_l"] = trig_left;
-  doc["t_r"] = trig_right;
+  doc["t_l"] = t_l;
+  doc["t_r"] = t_r;
 
-  doc["b_j"] = button_jstick;
+  doc["b_j"] = b_j;
   doc["a_j"] = angle_jstick;
 
-  doc["a_S"] = acc_ST;
   doc["a_x"] = acc_x;
   doc["a_y"] = acc_y;
   doc["a_z"] = acc_z;
@@ -165,14 +170,16 @@ bool readMsg(){
 
   // Lecture sur le port Seriel
   DeserializationError error = deserializeJson(doc, Serial);
-
+  shouldRead_ = false;
   // Si erreur dans le message
   if (error) {
     return false;
   }
 
   // Analyse des éléments du message message
+  
   parse_msg = doc["bg"];
+  //acc_ST = doc["a_S"];
   if (!parse_msg.isNull()) {
     return false;
   }
