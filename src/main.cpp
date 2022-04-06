@@ -10,7 +10,7 @@
 
 /*------------------------------ Constantes ---------------------------------*/
 
-#define BAUD 74880        // Frequence de transmission serielle
+#define BAUD 19200       // Frequence de transmission serielle
 #define TRIG_LEFT 41
 #define TRIG_RIGHT 39
 #define BUTTON_JSTICK 43
@@ -54,7 +54,7 @@ bool button_jstick = false;
 
 int d_u,d_d,d_l,d_r,t_l,t_r,b_j;
 
-double angle_jstick = 0;
+int angle_jstick = 0;
 
 bool acc_ST = false;
 int acc_x = 0; // La valeur max ne sera pas 1024 étant donné que l'accéléromètre est alimenté par du 3.3V
@@ -208,7 +208,7 @@ double j_stick()
 
   if ((vert_jstick >= (496 - JOYDRIFT) && hori_jstick >= (509 - JOYDRIFT)) && ((vert_jstick <= (496 + JOYDRIFT) && hori_jstick <= (509 + JOYDRIFT))))
   {
-    angle = angle;
+    return angle;
   }
   else
   {
@@ -216,6 +216,11 @@ double j_stick()
     hori_jstick -= 512;
     angle = atan2(vert_jstick, hori_jstick);
   }
+
+  if(angle < 0)
+    angle = ((PI + angle)/(2*PI)) * 360;
+  else
+    angle = ((abs(angle)/(2*PI)) * 360) + 180;
 
   return angle;
 }
