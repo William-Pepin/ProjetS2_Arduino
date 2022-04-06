@@ -38,6 +38,7 @@
 #define ACC_Z A4
 
 #define JOYDRIFT 25
+#define SHAKE_TRIG 20
 /*---------------------------- Variables globales ---------------------------*/
 
 int bargraph = 0;
@@ -57,9 +58,16 @@ int d_u,d_d,d_l,d_r,t_l,t_r,b_j;
 int angle_jstick = 0;
 
 bool acc_ST = false;
-int acc_x = 0; // La valeur max ne sera pas 1024 étant donné que l'accéléromètre est alimenté par du 3.3V
-int acc_y = 0;
-int acc_z = 0;
+int acc_x1 = 0; // La valeur max ne sera pas 1024 étant donné que l'accéléromètre est alimenté par du 3.3V
+int acc_y1 = 0;
+int acc_z1 = 0;
+int acc_x2 = 0; // La valeur max ne sera pas 1024 étant donné que l'accéléromètre est alimenté par du 3.3V
+int acc_y2 = 0;
+int acc_z2 = 0;
+int acc_x3 = 0; // La valeur max ne sera pas 1024 étant donné que l'accéléromètre est alimenté par du 3.3V
+int acc_y3 = 0;
+int acc_z3 = 0;
+int acc = 0;
 
 double angle = 0;
 
@@ -74,6 +82,7 @@ void bargraphPinSetup(int nbBar);
 void buttons();
 void showButtonpressed();
 void serialEvent();
+int acc_shake();
 /*---------------------------- Fonctions "Main" -----------------------------*/
 
 void setup()
@@ -120,6 +129,7 @@ void loop() {
   if(shouldRead_){
     readMsg();
     angle_jstick = j_stick();
+    acc = acc_shake();
     buttons();
     sendMsg();
   }
@@ -156,9 +166,7 @@ void sendMsg()
   doc["b_j"] = b_j;
   doc["a_j"] = angle_jstick;
 
-  doc["a_x"] = acc_x;
-  doc["a_y"] = acc_y;
-  doc["a_z"] = acc_z;
+  doc["acc"] = acc;
 
   // Serialisation
   serializeJson(doc, Serial);
@@ -389,3 +397,31 @@ void buttons()
 
   button_jstick = digitalRead(BUTTON_JSTICK);
 }
+
+int acc_shake()
+{
+  bool shake_x = false;
+  bool shake_y = false;
+  bool shake_z = false;
+
+  acc_x3 = acc_x2;
+  acc_y3 = acc_y2;
+  acc_z3 = acc_z2;
+
+  acc_x2 = acc_x1;
+  acc_y2 = acc_y1;
+  acc_z2 = acc_z1;
+
+  acc_x1 = analogRead(ACC_X);
+  acc_y1 = analogRead(ACC_Y);
+  acc_z1 = analogRead(ACC_Z);
+
+  int calc_x = ((acc_x1-acc_x2)+(acc_x2-acc_x3))/2;
+  int calc_y = ((acc_y1-acc_y2)+(acc_y2-acc_y3))/2;
+  int calc_z = ((acc_z1-acc_z2)+(acc_z2-acc_z3))/2;
+
+  if(calc_x >= SHAKE_TRIG || calc_y >= SHAKE_TRIG || calc_z >= SHAKE_TRIG)
+    return 1;
+  else
+    return 0;
+};
