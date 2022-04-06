@@ -416,9 +416,9 @@ int acc_shake()
   acc_y1 = analogRead(ACC_Y);
   acc_z1 = analogRead(ACC_Z);
 
-  int calc_x = ((acc_x1-acc_x2)+(acc_x2-acc_x3))/2;
-  int calc_y = ((acc_y1-acc_y2)+(acc_y2-acc_y3))/2;
-  int calc_z = ((acc_z1-acc_z2)+(acc_z2-acc_z3))/2;
+  int calc_x = (abs(acc_x1-acc_x2)+abs(acc_x2-acc_x3))/2;
+  int calc_y = (abs(acc_y1-acc_y2)+abs(acc_y2-acc_y3))/2;
+  int calc_z = (abs(acc_z1-acc_z2)+abs(acc_z2-acc_z3))/2;
 
   if(calc_x >= SHAKE_TRIG || calc_y >= SHAKE_TRIG || calc_z >= SHAKE_TRIG)
     return 1;
