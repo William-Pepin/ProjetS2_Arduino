@@ -10,7 +10,7 @@
 
 /*------------------------------ Constantes ---------------------------------*/
 
-#define BAUD 19200       // Frequence de transmission serielle
+#define BAUD 57600       // Frequence de transmission serielle
 #define TRIG_LEFT 41
 #define TRIG_RIGHT 39
 #define BUTTON_JSTICK 43
@@ -133,6 +133,7 @@ void loop() {
     buttons();
     sendMsg();
   }
+  delay(10);
 }
 
 /*---------------------------Definition de fonctions ------------------------*/
@@ -203,8 +204,10 @@ bool readMsg()
   parse_msg = doc["bg"];
   //acc_ST = doc["a_S"];
   if (!parse_msg.isNull()) {
-    return false;
+    bargraphPinSetup(parse_msg);
+    return true;
   }
+  return false;
 }
 
 double j_stick()
